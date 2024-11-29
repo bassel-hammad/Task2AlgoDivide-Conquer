@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from pyqtgraph import PlotWidget
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -33,8 +33,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)
         self.FrequencyGraph = PlotWidget(self.centralwidget)
         self.FrequencyGraph.setMinimumSize(QtCore.QSize(0, 250))
-        self.FrequencyGraph.setStyleSheet("background-color: rgb(0, 0, 0);\n"
-"")
+        self.FrequencyGraph.setStyleSheet("background-color: rgb(0, 0, 0);\n""")
         self.FrequencyGraph.setObjectName("FrequencyGraph")
         self.gridLayout_2.addWidget(self.FrequencyGraph, 1, 0, 1, 1)
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
@@ -100,7 +99,7 @@ class Ui_MainWindow(object):
         self.pushButton_4.setText(_translate("MainWindow", "Zoom Out"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
-from pyqtgraph import PlotWidget
+
 
 
 if __name__ == "__main__":

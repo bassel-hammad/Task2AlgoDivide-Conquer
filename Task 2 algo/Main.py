@@ -95,6 +95,34 @@ class MainWindow(QMainWindow):
         T = [cmath.exp(-2j * cmath.pi * k / n) * odd[k] for k in range(n // 2)]
         return [even[k] + T[k] for k in range(n // 2)] + \
             [even[k] - T[k] for k in range(n // 2)]
+    
+
+    def get_max_frequency(self,fft_result, frequencies):
+        """
+        Finds the frequency corresponding to the maximum magnitude in the FFT result.
+        :param fft_result: Array of FFT coefficients (complex numbers).
+        :param frequencies: Array of frequency bins corresponding to the FFT result.
+        :return: Maximum frequency value (Hz).
+        """
+        # Compute magnitudes of the FFT coefficients
+        magnitudes = np.abs(fft_result)
+        
+        # Focus only on positive frequencies (usually the first half of the spectrum)
+        n = len(frequencies)
+        positive_frequencies = frequencies[:n // 2]
+        positive_magnitudes = magnitudes[:n // 2]
+        
+        # Find the index of the maximum magnitude
+        max_index = np.argmax(positive_magnitudes)
+        
+        # Get the frequency corresponding to the maximum magnitude
+        max_frequency = positive_frequencies[max_index]
+        print(f"Maximum Frequency: {max_frequency} Hz")
+        return max_frequency
+
+        
+
+    
 
     def plotgraph(self, x, y):
         self.graph.clear()
@@ -114,6 +142,8 @@ class MainWindow(QMainWindow):
         self.Freqgraph.setTitle("Frequency-Domain Signal")
         self.Freqgraph.setLabel('left', 'Magnitude')
         self.Freqgraph.setLabel('bottom', 'Frequency (Hz)')
+        self.get_max_frequency(fft_result, freq)
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow()
