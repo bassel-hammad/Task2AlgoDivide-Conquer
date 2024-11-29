@@ -97,43 +97,39 @@ class MainWindow(QMainWindow):
             [even[k] - T[k] for k in range(n // 2)]
     
 
-    def get_max_frequency(self,fft_result, frequencies):
+    def detect_arrhythmia(self, fft_result, frequencies):
         """
-        Finds the frequency corresponding to the maximum magnitude in the FFT result.
+        Detects the type of arrhythmia based on FFT frequency-domain analysis.
         :param fft_result: Array of FFT coefficients (complex numbers).
         :param frequencies: Array of frequency bins corresponding to the FFT result.
-        :return: Maximum frequency value (Hz).
+        :return: Detected arrhythmia type (str).
         """
         # Compute magnitudes of the FFT coefficients
         magnitudes = np.abs(fft_result)
-        
-        # Focus only on positive frequencies (usually the first half of the spectrum)
         n = len(frequencies)
         positive_frequencies = frequencies[:n // 2]
         positive_magnitudes = magnitudes[:n // 2]
         
-        # Find the index of the maximum magnitude
+        # Find the dominant frequency
         max_index = np.argmax(positive_magnitudes)
-        
-        # Get the frequency corresponding to the maximum magnitude
-        max_frequency = positive_frequencies[max_index]
-        print(f"Maximum Frequency: {max_frequency} Hz")
-        return max_frequency
+        f_max = positive_frequencies[max_index]
 
-        
+        # Analyze frequency ranges
+        if 0.6 <= f_max <= 1.2:
+            return "Normal Sinus Rhythm"
+        elif 3 <= f_max <= 8:
+            return "Atrial Fibrillation"
+        elif 1.2 < f_max <= 3:
+            return "Ventricular Tachycardia"
+        elif 2.5 <= f_max <= 5:
+            return "Atrial Flutter"
+        else:
+            return "Unknown or Irregular Rhythm"
 
-    
-
-    def plotgraph(self, x, y):
-        self.graph.clear()
-        self.graph.plot(x, y, pen='b')
-        self.graph.setTitle("Time-Domain Signal")
-        self.graph.setLabel('left', 'Amplitude')
-        self.graph.setLabel('bottom', 'Time (s)')
-
+# Example usage in plot_fft
     def plot_fft(self, fft_result):
         n = len(fft_result)
-        freq = np.fft.fftfreq(n, d=1/self.sample_rate)
+        freq = np.fft.fftfreq(n, d=1/self.sample_rate)  # Frequency bins
         magnitude = np.abs(fft_result)
 
         half_n = n // 2
@@ -142,8 +138,18 @@ class MainWindow(QMainWindow):
         self.Freqgraph.setTitle("Frequency-Domain Signal")
         self.Freqgraph.setLabel('left', 'Magnitude')
         self.Freqgraph.setLabel('bottom', 'Frequency (Hz)')
-        self.get_max_frequency(fft_result, freq)
+        
+        # Detect arrhythmia type
+        arrhythmia_type = self.detect_arrhythmia(fft_result, freq)
+        print(f"Detected Arrhythmia Type: {arrhythmia_type}")
 
+
+    def plotgraph(self, x, y):
+            self.graph.clear()
+            self.graph.plot(x, y, pen='b')
+            self.graph.setTitle("Time-Domain Signal")
+            self.graph.setLabel('left', 'Amplitude')
+            self.graph.setLabel('bottom', 'Time (s)')
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow()
